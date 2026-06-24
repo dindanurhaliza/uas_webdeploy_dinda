@@ -1,31 +1,21 @@
-# uas_webdeploy_dinda# 🚀 [Nama Aplikasi] — Production Deployment
+# 🚀 UAS WEB DEPLOYMENT
 
 > UAS Sistem Operasi (MITI.202) + Jaringan Komputer (MITI.203)  
 > Kelas Sentul · Semester Genap 2025/2026 · STMIK Tazkia
 
 ---
 
-## 👥 Anggota Kelompok
-
-| Nama | NIM | Peran |
-|------|-----|-------|
-| [Nama 1] | [NIM] | [Misal: DevOps / Backend] |
-| [Nama 2] | [NIM] | [Misal: Networking / DNS] |
-| [Nama 3] | [NIM] | [Misal: Monitoring / CI-CD] |
-
----
-
 ## 📌 Tentang Aplikasi
 
-> _Jelaskan singkat aplikasi yang di-deploy: apa fungsinya, dibuat dengan apa (ExpressJS / static HTML), dan tujuannya._
+> Website statis berupa portofolio / profil IT Student yang di-deploy ke production menggunakan Docker + Nginx di VPS dengan domain HTTPS.
 
 **Tech Stack:**
-- Runtime: Node.js / ExpressJS _(sesuaikan)_
+- Aplikasi: Static HTML
 - Server: Nginx (reverse proxy) + Certbot (SSL)
 - Container: Docker + Docker Compose
 - CI/CD: GitHub Actions
 - Monitoring: Uptime Kuma
-- Backup: Cron job → Cloud Storage (S3 / R2 / B2)
+- Backup: Cron job → Cloud Storage B2
 
 ---
 
@@ -57,10 +47,10 @@ Developer (git push)
   │  │(monitor) │     │  SSL via certbot│   │
   │  └──────────┘     └────────┬────────┘   │
   │                            │ proxy_pass  │
-  │                    ┌───────▼────────┐   │
-  │                    │ App Container  │   │
-  │                    │ (Docker Compose│   │
-  │                    └───────┬────────┘   │
+  │                    ┌───────▼──────── ┐   │
+  │                    │ App Container   │   │
+  │                    │ (Docker Compose)│   │
+  │                    └───────┬──────── ┘   │
   │                            │            │
   │             ┌──────────────┘            │
   │             ▼                           │
@@ -95,15 +85,10 @@ User Browser → DNS (A Record) → IP VPS → HTTPS nginx → App
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml          # GitHub Actions CI/CD pipeline
-├── app/
-│   └── index.js                # Aplikasi utama (ExpressJS / static)
+├── html/
+│   ├── Dinda Siregar · IT Student_files/   # Asset pendukung (CSS, JS, gambar)
+│   └── index.html              # Halaman utama aplikasi (static HTML)
 ├── docker-compose.yml          # Container orchestration
-├── Dockerfile                  # Build image aplikasi
-├── nginx/
-│   └── [domain].conf           # Konfigurasi nginx reverse proxy
-├── .env.example                # Contoh environment variables (JANGAN commit .env asli)
-├── scripts/
-│   └── backup.sh               # Script backup harian
 └── README.md
 ```
 
@@ -116,11 +101,9 @@ File: `.github/workflows/deploy.yml`
 **Alur pipeline saat `git push` ke `main`:**
 
 1. GitHub Actions terpicu otomatis
-2. Build Docker image dari `Dockerfile`
-3. Jalankan test (jika ada)
-4. SSH ke VPS menggunakan secret `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`
-5. Eksekusi `docker compose pull && docker compose up -d`
-6. Aplikasi versi terbaru berjalan di production
+2. SSH ke VPS menggunakan secret `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`
+3. Eksekusi `docker compose pull && docker compose up -d`
+4. Aplikasi versi terbaru berjalan di production
 
 **GitHub Secrets yang dibutuhkan:**
 
@@ -155,14 +138,11 @@ docker logs uptime-kuma
 
 ## 📋 Log Aplikasi
 
-Aplikasi menulis log terstruktur ke stdout, dapat dibaca via:
+Karena aplikasi berupa static HTML yang di-serve nginx, log dapat dibaca via:
 
 ```bash
-# Via Docker logs
-docker logs [nama-container-app] --tail 100 -f
-
 # Via docker compose
-docker compose logs app --tail 100 -f
+docker compose logs --tail 100 -f
 
 # Filter log by waktu
 docker logs [nama-container] --since "2025-01-01T14:00:00"
@@ -378,10 +358,7 @@ File `.env` di VPS (`/home/[user]/app/.env`):
 
 | Variable | Keterangan | Sensitif? |
 |----------|------------|-----------|
-| `PORT` | Port aplikasi berjalan | ❌ |
-| `NODE_ENV` | Environment (production) | ❌ |
-| `DATABASE_URL` | Connection string database | ✅ Ya |
-| `API_KEY` | API key eksternal | ✅ Ya |
+| `DOMAIN` | Nama domain yang dipakai | ❌ |
 
 > ⚠️ **JANGAN pernah commit file `.env` ke repository!** Pastikan `.env` ada di `.gitignore`.
 

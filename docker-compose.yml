@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  web-uas:
+    image: nginx:latest
+    container_name: web_uas_dinda
+    ports:
+      - "8082:82"
+    volumes:
+      - ./html:/usr/share/nginx/html
+    restart: always
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: monitoring_uas_dinda
+    ports:
+      - "3003:3003" 
+    volumes:
+      - uptime-kuma-data:/app/data
+    restart: always
+
+volumes:
+  uptime-kuma-data:

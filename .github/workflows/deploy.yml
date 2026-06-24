@@ -1,0 +1,27 @@
+name: Deploy to VPS 
+
+on:
+  push:
+    branches:
+      - main # Jalankan otomatisasi hanya jika ada push ke branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH to Herza VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}       # IP VPS
+          username: ${{ secrets.VPS_USER }}   # Username
+          key: ${{ secrets.VPS_SSH_KEY }}     # SSH Private Key
+          port: 22
+          script: |
+            cd /home/dinda/tugas-uas || mkdir -p /home/dinda/tugas-uas && cd /home/dinda/tugas-uas
+            git pull origin main
+            docker compose down
+            docker compose up -d --build
