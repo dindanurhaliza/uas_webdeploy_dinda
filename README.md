@@ -39,18 +39,18 @@ Developer (git push)
         │
         ▼  (SSH Deploy)
   ┌─────────────────────────────────────────┐
-  │              VPS Server                  │
-  │                                          │
+  │              VPS Server                 │
+  │                                         │
   │  ┌──────────┐     ┌─────────────────┐   │
   │  │  Uptime  │────▶│   nginx         │   │
   │  │  Kuma    │     │  :80 / :443     │   │
   │  │(monitor) │     │  SSL via certbot│   │
   │  └──────────┘     └────────┬────────┘   │
-  │                            │ proxy_pass  │
-  │                    ┌───────▼──────── ┐   │
-  │                    │ App Container   │   │
-  │                    │ (Docker Compose)│   │
-  │                    └───────┬──────── ┘   │
+  │                            │ proxy_pass │
+  │                    ┌───────▼──────── ┐  │
+  │                    │ App Container   │  │
+  │                    │ (Docker Compose)│  │
+  │                    └───────┬──────── ┘  │
   │                            │            │
   │             ┌──────────────┘            │
   │             ▼                           │
@@ -58,7 +58,7 @@ Developer (git push)
   └─────────────┬───────────────────────────┘
                 │
                 ▼
-        Cloud Storage (S3/R2/B2)
+        Cloud Storage (B2)
 
 User Browser → DNS (A Record) → IP VPS → HTTPS nginx → App
 ```
@@ -69,12 +69,12 @@ User Browser → DNS (A Record) → IP VPS → HTTPS nginx → App
 
 | Komponen | Detail |
 |----------|--------|
-| Domain | `https://[domain-kamu.com]` |
-| VPS Provider | [Contoh: DigitalOcean / Vultr / dll] |
-| IP VPS | `[xxx.xxx.xxx.xxx]` |
+| Domain | `https://dindanurhaliza.my.id` |
+| VPS Provider | Herza |
+| IP VPS | `[103.168.146.195]` |
 | SSL | Let's Encrypt via Certbot |
-| Port App | `[3000]` _(sesuaikan)_ |
-| Monitoring URL | `http://[domain]:3001` _(Uptime Kuma)_ |
+| Port App | `[8082]` |
+| Monitoring URL | `http://103.168.146.195:3003` _(Uptime Kuma)_ |
 
 ---
 
@@ -120,7 +120,7 @@ File: `.github/workflows/deploy.yml`
 ## 📊 Monitoring
 
 **Tool:** Uptime Kuma  
-**Dashboard:** `http://[domain]:3001`
+**Dashboard:** `http://103.168.146.195:3003`
 
 Uptime Kuma dikonfigurasi untuk polling endpoint aplikasi setiap **1 menit**.  
 Alert dikirim via [Telegram / Email / dll] jika downtime terdeteksi.
@@ -162,7 +162,7 @@ tail -f /var/log/nginx/error.log
 ## 💾 Backup
 
 **Jadwal:** Setiap hari pukul 02:00 WIB  
-**Tujuan:** Cloud Storage ([S3 / R2 / B2])
+**Tujuan:** Cloud Storage (B2)
 
 **Cek cron job:**
 ```bash
